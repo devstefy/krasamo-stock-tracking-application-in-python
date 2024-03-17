@@ -1,17 +1,15 @@
-import threading
-import time
-
+from App import *
 from APIsManagement import *
 
 class StockTrackingApplication():
 
     def __init__(self):
         self.apisManagement = APIsManagement()
+        self.app = App(self)
         self.stockSymbols = []
-        """ self.apiThread = threading.Thread(target=self.getAPI())
-        self.apiThread.start() """
 
-    def startAPIsManagement(self):
+    def createApp(self):
         self.apisManagement.getListingStatus()
+        self.app.run()
 
     
