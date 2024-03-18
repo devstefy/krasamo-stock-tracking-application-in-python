@@ -1,3 +1,23 @@
+"""
+APIsManagement Class
+
+This class handles interactions with Alpha Vantage APIs and manages data retrieval and storage for listing status and global quotes.
+
+Attributes:
+    db (Database): Instance of the Database class for database interactions.
+    apiKey (str): Alpha Vantage API key for authentication.
+    date (str): Date for listing status retrieval.
+    symbol (str): Stock symbol for global quote retrieval.
+    apiURLGlobalQuotes (str): Base URL for the GLOBAL_QUOTE API endpoint.
+    apiURLListingStatus (str): Base URL for the LISTING_STATUS API endpoint.
+    apiURLGlobalQuotesWithKey (str): Complete URL for the GLOBAL_QUOTE API request.
+    apiURLListingStatusWithKey (str): Complete URL for the LISTING_STATUS API request.
+    listingStatusDataFrame (pandas.DataFrame): DataFrame containing listing status data.
+    symbolsDataFrame (pandas.DataFrame): DataFrame containing a list of stock symbols.
+    globalQuotesDataFrame (pandas.DataFrame): DataFrame containing global quote data.
+"""
+
+# Libraries
 import requests
 import pandas as pd
 from io import StringIO
@@ -6,6 +26,12 @@ import datetime
 class APIsManagement():
 
     def __init__(self, db):
+        """
+        Initializes the APIsManagement instance, setting up attributes for API calls and data management.
+
+        Args:
+            db (Database): Instance of the Database class for database interactions.
+        """
         self.db = db
 
         self.apiKey = "VJ856XHXT0I8GR7N"
@@ -32,23 +58,56 @@ class APIsManagement():
         self.globalQuotesDataFrame = pd.DataFrame(columns=['symbol', 'current', 'minimum', 'maximum'])
 
     def createURLAPIListingStatus(self):
+        """
+        Creates the complete URL for the LISTING_STATUS API request, appending the API key and date.
+        """
         self.apiURLListingStatusWithKey = ""
         self.apiURLListingStatusWithKey += f"{self.apiURLListingStatus}&date={self.date}&apikey={self.apiKey}"
 
     def createURLAPIGlobalQuotes(self):
+        """
+        Creates the complete URL for the GLOBAL_QUOTE API request, appending the API key and symbol.
+        """
         self.apiURLGlobalQuotesWithKey = ""
         self.apiURLGlobalQuotesWithKey += f"{self.apiURLGlobalQuotes}&symbol={self.symbol}&apikey={self.apiKey}"
 
     def getListingStatus(self):
+        """
+        Retrieves listing status data from Alpha Vantage and updates the listingStatusDataFrame attribute.
+
+        Returns:
+            str: Success message or error message based on the API request outcome.
+        """
         self.createURLAPIListingStatus()
         return self.getAPIListingStatus()
 
     def getGlobalQuote(self, symbol : str):
+        """
+        Retrieves global quote data for a given symbol from Alpha Vantage and updates the globalQuotesDataFrame attribute.
+
+        Args:
+            symbol (str): Stock symbol for which to retrieve global quote data.
+
+        Returns:
+            pandas.DataFrame: DataFrame containing the retrieved global quote data.
+        """
         self.symbol = symbol
         self.createURLAPIGlobalQuotes()
         return self.getAPIGlobalQuote()
 
     def getAPIListingStatus(self):
+        """
+        Performs the actual API request to retrieve listing status data using the pre-built URL (`self.apiURLListingStatusWithKey`). 
+
+        - Fetches data using a requests.Session.
+        - Parses the downloaded content as a DataFrame.
+        - Validates the DataFrame format (ensuring it has expected columns like 'symbol' and 'status').
+        - Updates `self.listingStatusDataFrame` and `self.symbolsDataFrame` with the retrieved data on success.
+        - Handles potential exceptions related to requests library and falls back to reading data from the database if an error occurs.
+
+        Returns:
+            str: Success message ("Successful API request!✅") or error message ("An error has occurred ❌") depending on the outcome.
+        """
         try:
             with requests.Session() as session:
 
@@ -95,6 +154,22 @@ class APIsManagement():
         return "An error has occurred ❌"
         
     def getAPIGlobalQuote(self):
+        """
+        Retrieves global quote data for a specific symbol using the pre-built URL (`self.apiURLGlobalQuotesWithKey`).
+
+        - Makes a GET request using requests.get.
+        - Checks for a successful response status code (200).
+        - Parses the JSON response to extract relevant data (current price, minimum, maximum).
+        - Updates `self.globalQuotesDataFrame` with the retrieved data.
+        - Creates and returns a DataFrame containing the global quote data.
+        - Returns an empty DataFrame if the API request or data parsing fails.
+
+        Args:
+            symbol (str): Stock symbol for which to retrieve global quote data.
+
+        Returns:
+            pandas.DataFrame: DataFrame containing the retrieved global quote data, or an empty DataFrame if errors occur.
+        """
         response = requests.get(self.apiURLGlobalQuotesWithKey)
         dfGlobalQuote = pd.DataFrame(columns=['symbol', 'current', 'minimum', 'maximum'])
         if response.status_code == 200:
@@ -111,23 +186,57 @@ class APIsManagement():
         return dfGlobalQuote
 
     def readListingStatusCSV(self):
+        """
+        Reads listing status data from a CSV file named 'listing_status.csv'.
+
+        - Prints a message indicating the CSV file being loaded.
+        - Uses pandas.read_csv to parse the CSV data into a DataFrame.
+        - Updates `self.listingStatusDataFrame` and `self.symbolsDataFrame` with the DataFrame containing listing status information.
+        """
         print("The last CSV displayed will be loaded.")
         df = pd.read_csv('listing_status.csv')
         self.listingStatusDataFrame = df
         self.symbolsDataFrame = df[["symbol"]]
 
     def readListingStatusDB(self):
+        """
+        Reads listing status data from the database using the `db.readListingStatusDB()` method.
+
+        - Prints a message indicating the table 'Listing Status' is being loaded.
+        - Calls the `db.readListingStatusDB()` method of the connected database instance (`self.db`) to retrieve the data.
+        - Updates `self.listingStatusDataFrame` and `self.symbolsDataFrame` with the DataFrame containing listing status information retrieved from the database.
+        """
         print("The Table Listing Status will be loaded.")
         df = self.db.readListingStatusDB()
         self.listingStatusDataFrame = df
         self.symbolsDataFrame = df[["symbol"]]
 
     def readGlobalQuotesDB(self):
+        """
+        Reads global quote data from the database using the `db.readGlobalQuotesDB()` method.
+
+        - Prints a message indicating the table 'Global Quotes' is being loaded.
+        - Calls the `db.readGlobalQuotesDB()` method of the connected database instance (`self.db`) to retrieve the data.
+        - Updates `self.globalQuotesDataFrame` with the DataFrame containing global quote information retrieved from the database.
+        """
         print("The Table Global Quotes will be loaded.")
         df = self.db.readGlobalQuotesDB()
         self.globalQuotesDataFrame = df
 
     def updateGlobalQuotesDataFrame(self, symbol, current, minimum, maximum):
+        """
+        Updates the `self.globalQuotesDataFrame` with new global quote data for a specific symbol.
+
+        - Checks if the symbol already exists in the DataFrame.
+            - If it exists, updates the corresponding rows for 'current', 'minimum', and 'maximum' values.
+            - If it doesn't exist, creates a new row with the provided data and concatenates it to the DataFrame.
+
+        Args:
+            symbol (str): Stock symbol for which to update global quote data.
+            current (str): Current stock price.
+            minimum (str): Minimum stock price for the day.
+            maximum (str): Maximum stock price for the day.
+        """
         if symbol in self.globalQuotesDataFrame['symbol'].values:
             self.globalQuotesDataFrame.loc[self.globalQuotesDataFrame['symbol'] == symbol, ['current', 'minimum', 'maximum']] = [current, minimum, maximum]
         else:
