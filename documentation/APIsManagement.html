@@ -1,0 +1,396 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head>
+    <title>Python: module APIsManagement</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  </head>
+  <body bgcolor="#f0f0f8">
+    <table
+      width="100%"
+      cellspacing="0"
+      cellpadding="2"
+      border="0"
+      summary="heading"
+    >
+      <tr bgcolor="#7799ee">
+        <td valign="bottom">
+          &nbsp;<br />
+          <font color="#ffffff" face="helvetica, arial"
+            >&nbsp;<br /><big
+              ><big><strong>APIsManagement</strong></big></big
+            ></font
+          >
+        </td>
+      </tr>
+    </table>
+
+    <p>
+      <tt
+        ><a href="#APIsManagement">APIsManagement</a>&nbsp;Class<br />
+        &nbsp;<br />
+        This&nbsp;class&nbsp;handles&nbsp;interactions&nbsp;with&nbsp;Alpha&nbsp;Vantage&nbsp;APIs&nbsp;and&nbsp;manages&nbsp;data&nbsp;retrieval&nbsp;and&nbsp;storage&nbsp;for&nbsp;listing&nbsp;status&nbsp;and&nbsp;global&nbsp;quotes.<br />
+        &nbsp;<br />
+        Attributes:<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;(Database):&nbsp;Instance&nbsp;of&nbsp;the&nbsp;Database&nbsp;class&nbsp;for&nbsp;database&nbsp;interactions.<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;apiKey&nbsp;(str):&nbsp;Alpha&nbsp;Vantage&nbsp;API&nbsp;key&nbsp;for&nbsp;authentication.<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;date&nbsp;(str):&nbsp;Date&nbsp;for&nbsp;listing&nbsp;status&nbsp;retrieval.<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;symbol&nbsp;(str):&nbsp;Stock&nbsp;symbol&nbsp;for&nbsp;global&nbsp;quote&nbsp;retrieval.<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;apiURLGlobalQuotes&nbsp;(str):&nbsp;Base&nbsp;URL&nbsp;for&nbsp;the&nbsp;GLOBAL_QUOTE&nbsp;API&nbsp;endpoint.<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;apiURLListingStatus&nbsp;(str):&nbsp;Base&nbsp;URL&nbsp;for&nbsp;the&nbsp;LISTING_STATUS&nbsp;API&nbsp;endpoint.<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;apiURLGlobalQuotesWithKey&nbsp;(str):&nbsp;Complete&nbsp;URL&nbsp;for&nbsp;the&nbsp;GLOBAL_QUOTE&nbsp;API&nbsp;request.<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;apiURLListingStatusWithKey&nbsp;(str):&nbsp;Complete&nbsp;URL&nbsp;for&nbsp;the&nbsp;LISTING_STATUS&nbsp;API&nbsp;request.<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;listingStatusDataFrame&nbsp;(pandas.DataFrame):&nbsp;DataFrame&nbsp;containing&nbsp;listing&nbsp;status&nbsp;data.<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;symbolsDataFrame&nbsp;(pandas.DataFrame):&nbsp;DataFrame&nbsp;containing&nbsp;a&nbsp;list&nbsp;of&nbsp;stock&nbsp;symbols.<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;globalQuotesDataFrame&nbsp;(pandas.DataFrame):&nbsp;DataFrame&nbsp;containing&nbsp;global&nbsp;quote&nbsp;data.</tt
+      >
+    </p>
+    <p></p>
+    <table
+      width="100%"
+      cellspacing="0"
+      cellpadding="2"
+      border="0"
+      summary="section"
+    >
+      <tr bgcolor="#aa55cc">
+        <td colspan="3" valign="bottom">
+          &nbsp;<br />
+          <font color="#ffffff" face="helvetica, arial"
+            ><big><strong>Modules</strong></big></font
+          >
+        </td>
+      </tr>
+
+      <tr>
+        <td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+        <td>&nbsp;</td>
+        <td width="100%">
+          <table width="100%" summary="list">
+            <tr>
+              <td width="25%" valign="top">
+                <a href="datetime.html">datetime</a><br />
+              </td>
+              <td width="25%" valign="top">
+                <a href="pandas.html">pandas</a><br />
+              </td>
+              <td width="25%" valign="top">
+                <a href="requests.html">requests</a><br />
+              </td>
+              <td width="25%" valign="top"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <p></p>
+    <table
+      width="100%"
+      cellspacing="0"
+      cellpadding="2"
+      border="0"
+      summary="section"
+    >
+      <tr bgcolor="#ee77aa">
+        <td colspan="3" valign="bottom">
+          &nbsp;<br />
+          <font color="#ffffff" face="helvetica, arial"
+            ><big><strong>Classes</strong></big></font
+          >
+        </td>
+      </tr>
+
+      <tr>
+        <td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+        <td>&nbsp;</td>
+        <td width="100%">
+          <dl>
+            <dt>
+              <font face="helvetica, arial"
+                ><a href="builtins.html#object">builtins.object</a>
+              </font>
+            </dt>
+            <dd>
+              <dl>
+                <dt>
+                  <font face="helvetica, arial"
+                    ><a href="APIsManagement.html#APIsManagement"
+                      >APIsManagement</a
+                    >
+                  </font>
+                </dt>
+              </dl>
+            </dd>
+          </dl>
+          <p></p>
+          <table
+            width="100%"
+            cellspacing="0"
+            cellpadding="2"
+            border="0"
+            summary="section"
+          >
+            <tr bgcolor="#ffc8d8">
+              <td colspan="3" valign="bottom">
+                &nbsp;<br />
+                <font color="#000000" face="helvetica, arial"
+                  ><a name="APIsManagement"
+                    >class <strong>APIsManagement</strong></a
+                  >(<a href="builtins.html#object">builtins.object</a>)</font
+                >
+              </td>
+            </tr>
+
+            <tr bgcolor="#ffc8d8">
+              <td rowspan="2"><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+              <td colspan="2">
+                <tt
+                  ><a href="#APIsManagement">APIsManagement</a>(db)<br />
+                  &nbsp;<br />
+                  <br />&nbsp;</tt
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td width="100%">
+                Methods defined here:<br />
+                <dl>
+                  <dt>
+                    <a name="APIsManagement-__init__"
+                      ><strong>__init__</strong></a
+                    >(self, db)
+                  </dt>
+                  <dd>
+                    <tt
+                      >Initializes&nbsp;the&nbsp;<a href="#APIsManagement"
+                        >APIsManagement</a
+                      >&nbsp;instance,&nbsp;setting&nbsp;up&nbsp;attributes&nbsp;for&nbsp;API&nbsp;calls&nbsp;and&nbsp;data&nbsp;management.<br />
+                      &nbsp;<br />
+                      Args:<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;(Database):&nbsp;Instance&nbsp;of&nbsp;the&nbsp;Database&nbsp;class&nbsp;for&nbsp;database&nbsp;interactions.</tt
+                    >
+                  </dd>
+                </dl>
+
+                <dl>
+                  <dt>
+                    <a name="APIsManagement-createURLAPIGlobalQuotes"
+                      ><strong>createURLAPIGlobalQuotes</strong></a
+                    >(self)
+                  </dt>
+                  <dd>
+                    <tt
+                      >Creates&nbsp;the&nbsp;complete&nbsp;URL&nbsp;for&nbsp;the&nbsp;GLOBAL_QUOTE&nbsp;API&nbsp;request,&nbsp;appending&nbsp;the&nbsp;API&nbsp;key&nbsp;and&nbsp;symbol.</tt
+                    >
+                  </dd>
+                </dl>
+
+                <dl>
+                  <dt>
+                    <a name="APIsManagement-createURLAPIListingStatus"
+                      ><strong>createURLAPIListingStatus</strong></a
+                    >(self)
+                  </dt>
+                  <dd>
+                    <tt
+                      >Creates&nbsp;the&nbsp;complete&nbsp;URL&nbsp;for&nbsp;the&nbsp;LISTING_STATUS&nbsp;API&nbsp;request,&nbsp;appending&nbsp;the&nbsp;API&nbsp;key&nbsp;and&nbsp;date.</tt
+                    >
+                  </dd>
+                </dl>
+
+                <dl>
+                  <dt>
+                    <a name="APIsManagement-getAPIGlobalQuote"
+                      ><strong>getAPIGlobalQuote</strong></a
+                    >(self)
+                  </dt>
+                  <dd>
+                    <tt
+                      >Retrieves&nbsp;global&nbsp;quote&nbsp;data&nbsp;for&nbsp;a&nbsp;specific&nbsp;symbol&nbsp;using&nbsp;the&nbsp;pre-built&nbsp;URL&nbsp;(`self.<strong>apiURLGlobalQuotesWithKey</strong>`).<br />
+                      &nbsp;<br />
+                      -&nbsp;Makes&nbsp;a&nbsp;GET&nbsp;request&nbsp;using&nbsp;requests.get.<br />
+                      -&nbsp;Checks&nbsp;for&nbsp;a&nbsp;successful&nbsp;response&nbsp;status&nbsp;code&nbsp;(200).<br />
+                      -&nbsp;Parses&nbsp;the&nbsp;JSON&nbsp;response&nbsp;to&nbsp;extract&nbsp;relevant&nbsp;data&nbsp;(current&nbsp;price,&nbsp;minimum,&nbsp;maximum).<br />
+                      -&nbsp;Updates&nbsp;`self.<strong>globalQuotesDataFrame</strong>`&nbsp;with&nbsp;the&nbsp;retrieved&nbsp;data.<br />
+                      -&nbsp;Creates&nbsp;and&nbsp;returns&nbsp;a&nbsp;DataFrame&nbsp;containing&nbsp;the&nbsp;global&nbsp;quote&nbsp;data.<br />
+                      -&nbsp;Returns&nbsp;an&nbsp;empty&nbsp;DataFrame&nbsp;if&nbsp;the&nbsp;API&nbsp;request&nbsp;or&nbsp;data&nbsp;parsing&nbsp;fails.<br />
+                      &nbsp;<br />
+                      Args:<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;symbol&nbsp;(str):&nbsp;Stock&nbsp;symbol&nbsp;for&nbsp;which&nbsp;to&nbsp;retrieve&nbsp;global&nbsp;quote&nbsp;data.<br />
+                      &nbsp;<br />
+                      Returns:<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;pandas.DataFrame:&nbsp;DataFrame&nbsp;containing&nbsp;the&nbsp;retrieved&nbsp;global&nbsp;quote&nbsp;data,&nbsp;or&nbsp;an&nbsp;empty&nbsp;DataFrame&nbsp;if&nbsp;errors&nbsp;occur.</tt
+                    >
+                  </dd>
+                </dl>
+
+                <dl>
+                  <dt>
+                    <a name="APIsManagement-getAPIListingStatus"
+                      ><strong>getAPIListingStatus</strong></a
+                    >(self)
+                  </dt>
+                  <dd>
+                    <tt
+                      >Performs&nbsp;the&nbsp;actual&nbsp;API&nbsp;request&nbsp;to&nbsp;retrieve&nbsp;listing&nbsp;status&nbsp;data&nbsp;using&nbsp;the&nbsp;pre-built&nbsp;URL&nbsp;(`self.<strong>apiURLListingStatusWithKey</strong>`).&nbsp;<br />
+                      &nbsp;<br />
+                      -&nbsp;Fetches&nbsp;data&nbsp;using&nbsp;a&nbsp;requests.Session.<br />
+                      -&nbsp;Parses&nbsp;the&nbsp;downloaded&nbsp;content&nbsp;as&nbsp;a&nbsp;DataFrame.<br />
+                      -&nbsp;Validates&nbsp;the&nbsp;DataFrame&nbsp;format&nbsp;(ensuring&nbsp;it&nbsp;has&nbsp;expected&nbsp;columns&nbsp;like&nbsp;'symbol'&nbsp;and&nbsp;'status').<br />
+                      -&nbsp;Updates&nbsp;`self.<strong>listingStatusDataFrame</strong>`&nbsp;and&nbsp;`self.<strong>symbolsDataFrame</strong>`&nbsp;with&nbsp;the&nbsp;retrieved&nbsp;data&nbsp;on&nbsp;success.<br />
+                      -&nbsp;Handles&nbsp;potential&nbsp;exceptions&nbsp;related&nbsp;to&nbsp;requests&nbsp;library&nbsp;and&nbsp;falls&nbsp;back&nbsp;to&nbsp;reading&nbsp;data&nbsp;from&nbsp;the&nbsp;database&nbsp;if&nbsp;an&nbsp;error&nbsp;occurs.<br />
+                      &nbsp;<br />
+                      Returns:<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;Success&nbsp;message&nbsp;("Successful&nbsp;API&nbsp;request!✅")&nbsp;or&nbsp;error&nbsp;message&nbsp;("An&nbsp;error&nbsp;has&nbsp;occurred&nbsp;❌")&nbsp;depending&nbsp;on&nbsp;the&nbsp;outcome.</tt
+                    >
+                  </dd>
+                </dl>
+
+                <dl>
+                  <dt>
+                    <a name="APIsManagement-getGlobalQuote"
+                      ><strong>getGlobalQuote</strong></a
+                    >(self, symbol: str)
+                  </dt>
+                  <dd>
+                    <tt
+                      >Retrieves&nbsp;global&nbsp;quote&nbsp;data&nbsp;for&nbsp;a&nbsp;given&nbsp;symbol&nbsp;from&nbsp;Alpha&nbsp;Vantage&nbsp;and&nbsp;updates&nbsp;the&nbsp;globalQuotesDataFrame&nbsp;attribute.<br />
+                      &nbsp;<br />
+                      Args:<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;symbol&nbsp;(str):&nbsp;Stock&nbsp;symbol&nbsp;for&nbsp;which&nbsp;to&nbsp;retrieve&nbsp;global&nbsp;quote&nbsp;data.<br />
+                      &nbsp;<br />
+                      Returns:<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;pandas.DataFrame:&nbsp;DataFrame&nbsp;containing&nbsp;the&nbsp;retrieved&nbsp;global&nbsp;quote&nbsp;data.</tt
+                    >
+                  </dd>
+                </dl>
+
+                <dl>
+                  <dt>
+                    <a name="APIsManagement-getListingStatus"
+                      ><strong>getListingStatus</strong></a
+                    >(self)
+                  </dt>
+                  <dd>
+                    <tt
+                      >Retrieves&nbsp;listing&nbsp;status&nbsp;data&nbsp;from&nbsp;Alpha&nbsp;Vantage&nbsp;and&nbsp;updates&nbsp;the&nbsp;listingStatusDataFrame&nbsp;attribute.<br />
+                      &nbsp;<br />
+                      Returns:<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;Success&nbsp;message&nbsp;or&nbsp;error&nbsp;message&nbsp;based&nbsp;on&nbsp;the&nbsp;API&nbsp;request&nbsp;outcome.</tt
+                    >
+                  </dd>
+                </dl>
+
+                <dl>
+                  <dt>
+                    <a name="APIsManagement-readGlobalQuotesDB"
+                      ><strong>readGlobalQuotesDB</strong></a
+                    >(self)
+                  </dt>
+                  <dd>
+                    <tt
+                      >Reads&nbsp;global&nbsp;quote&nbsp;data&nbsp;from&nbsp;the&nbsp;database&nbsp;using&nbsp;the&nbsp;`db.<a
+                        href="#APIsManagement-readGlobalQuotesDB"
+                        >readGlobalQuotesDB</a
+                      >()`&nbsp;method.<br />
+                      &nbsp;<br />
+                      -&nbsp;Prints&nbsp;a&nbsp;message&nbsp;indicating&nbsp;the&nbsp;table&nbsp;'Global&nbsp;Quotes'&nbsp;is&nbsp;being&nbsp;loaded.<br />
+                      -&nbsp;Calls&nbsp;the&nbsp;`db.<a
+                        href="#APIsManagement-readGlobalQuotesDB"
+                        >readGlobalQuotesDB</a
+                      >()`&nbsp;method&nbsp;of&nbsp;the&nbsp;connected&nbsp;database&nbsp;instance&nbsp;(`self.<strong>db</strong>`)&nbsp;to&nbsp;retrieve&nbsp;the&nbsp;data.<br />
+                      -&nbsp;Updates&nbsp;`self.<strong>globalQuotesDataFrame</strong>`&nbsp;with&nbsp;the&nbsp;DataFrame&nbsp;containing&nbsp;global&nbsp;quote&nbsp;information&nbsp;retrieved&nbsp;from&nbsp;the&nbsp;database.</tt
+                    >
+                  </dd>
+                </dl>
+
+                <dl>
+                  <dt>
+                    <a name="APIsManagement-readListingStatusCSV"
+                      ><strong>readListingStatusCSV</strong></a
+                    >(self)
+                  </dt>
+                  <dd>
+                    <tt
+                      >Reads&nbsp;listing&nbsp;status&nbsp;data&nbsp;from&nbsp;a&nbsp;CSV&nbsp;file&nbsp;named&nbsp;'listing_status.csv'.<br />
+                      &nbsp;<br />
+                      -&nbsp;Prints&nbsp;a&nbsp;message&nbsp;indicating&nbsp;the&nbsp;CSV&nbsp;file&nbsp;being&nbsp;loaded.<br />
+                      -&nbsp;Uses&nbsp;pandas.read_csv&nbsp;to&nbsp;parse&nbsp;the&nbsp;CSV&nbsp;data&nbsp;into&nbsp;a&nbsp;DataFrame.<br />
+                      -&nbsp;Updates&nbsp;`self.<strong>listingStatusDataFrame</strong>`&nbsp;and&nbsp;`self.<strong>symbolsDataFrame</strong>`&nbsp;with&nbsp;the&nbsp;DataFrame&nbsp;containing&nbsp;listing&nbsp;status&nbsp;information.</tt
+                    >
+                  </dd>
+                </dl>
+
+                <dl>
+                  <dt>
+                    <a name="APIsManagement-readListingStatusDB"
+                      ><strong>readListingStatusDB</strong></a
+                    >(self)
+                  </dt>
+                  <dd>
+                    <tt
+                      >Reads&nbsp;listing&nbsp;status&nbsp;data&nbsp;from&nbsp;the&nbsp;database&nbsp;using&nbsp;the&nbsp;`db.<a
+                        href="#APIsManagement-readListingStatusDB"
+                        >readListingStatusDB</a
+                      >()`&nbsp;method.<br />
+                      &nbsp;<br />
+                      -&nbsp;Prints&nbsp;a&nbsp;message&nbsp;indicating&nbsp;the&nbsp;table&nbsp;'Listing&nbsp;Status'&nbsp;is&nbsp;being&nbsp;loaded.<br />
+                      -&nbsp;Calls&nbsp;the&nbsp;`db.<a
+                        href="#APIsManagement-readListingStatusDB"
+                        >readListingStatusDB</a
+                      >()`&nbsp;method&nbsp;of&nbsp;the&nbsp;connected&nbsp;database&nbsp;instance&nbsp;(`self.<strong>db</strong>`)&nbsp;to&nbsp;retrieve&nbsp;the&nbsp;data.<br />
+                      -&nbsp;Updates&nbsp;`self.<strong>listingStatusDataFrame</strong>`&nbsp;and&nbsp;`self.<strong>symbolsDataFrame</strong>`&nbsp;with&nbsp;the&nbsp;DataFrame&nbsp;containing&nbsp;listing&nbsp;status&nbsp;information&nbsp;retrieved&nbsp;from&nbsp;the&nbsp;database.</tt
+                    >
+                  </dd>
+                </dl>
+
+                <dl>
+                  <dt>
+                    <a name="APIsManagement-updateGlobalQuotesDataFrame"
+                      ><strong>updateGlobalQuotesDataFrame</strong></a
+                    >(self, symbol, current, minimum, maximum)
+                  </dt>
+                  <dd>
+                    <tt
+                      >Updates&nbsp;the&nbsp;`self.<strong>globalQuotesDataFrame</strong>`&nbsp;with&nbsp;new&nbsp;global&nbsp;quote&nbsp;data&nbsp;for&nbsp;a&nbsp;specific&nbsp;symbol.<br />
+                      &nbsp;<br />
+                      -&nbsp;Checks&nbsp;if&nbsp;the&nbsp;symbol&nbsp;already&nbsp;exists&nbsp;in&nbsp;the&nbsp;DataFrame.<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;If&nbsp;it&nbsp;exists,&nbsp;updates&nbsp;the&nbsp;corresponding&nbsp;rows&nbsp;for&nbsp;'current',&nbsp;'minimum',&nbsp;and&nbsp;'maximum'&nbsp;values.<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;If&nbsp;it&nbsp;doesn't&nbsp;exist,&nbsp;creates&nbsp;a&nbsp;new&nbsp;row&nbsp;with&nbsp;the&nbsp;provided&nbsp;data&nbsp;and&nbsp;concatenates&nbsp;it&nbsp;to&nbsp;the&nbsp;DataFrame.<br />
+                      &nbsp;<br />
+                      Args:<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;symbol&nbsp;(str):&nbsp;Stock&nbsp;symbol&nbsp;for&nbsp;which&nbsp;to&nbsp;update&nbsp;global&nbsp;quote&nbsp;data.<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;current&nbsp;(str):&nbsp;Current&nbsp;stock&nbsp;price.<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;minimum&nbsp;(str):&nbsp;Minimum&nbsp;stock&nbsp;price&nbsp;for&nbsp;the&nbsp;day.<br />
+                      &nbsp;&nbsp;&nbsp;&nbsp;maximum&nbsp;(str):&nbsp;Maximum&nbsp;stock&nbsp;price&nbsp;for&nbsp;the&nbsp;day.</tt
+                    >
+                  </dd>
+                </dl>
+
+                <hr />
+                Data descriptors defined here:<br />
+                <dl>
+                  <dt><strong>__dict__</strong></dt>
+                  <dd>
+                    <tt
+                      >dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt
+                    >
+                  </dd>
+                </dl>
+                <dl>
+                  <dt><strong>__weakref__</strong></dt>
+                  <dd>
+                    <tt
+                      >list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt
+                    >
+                  </dd>
+                </dl>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
