@@ -7,6 +7,7 @@ class App():
 
     def __init__(self, stockTrackingApplication):
         self.stockTrackingApplication = stockTrackingApplication
+
         self.listingStatusDataFrame = pd.DataFrame()
         self.globalQuotesDataFrame = pd.DataFrame()
         self.symbolList = []
@@ -30,7 +31,19 @@ class App():
             )
             saveButton = st.button('Save', key = 'save')
             if saveButton:
-                st.toast('Successfully saved!✅')
+                resultListingStatus = self.stockTrackingApplication.db.updateTableListingStatus(self.stockTrackingApplication.apisManagement.listingStatusDataFrame)
+                resultGlobalQuotes = self.stockTrackingApplication.db.updateTableGlobalQuotes(self.stockTrackingApplication.apisManagement.globalQuotesDataFrame)
+                if resultListingStatus and resultGlobalQuotes:
+                    st.toast('Successfully saved!✅')
+                elif resultListingStatus:
+                    st.toast('Successfully saved!✅')
+                    st.toast("❌ Oops... an error occurred while trying to update the Global Quotes Table.")
+                elif resultGlobalQuotes:
+                    st.toast('Successfully saved!✅')
+                    st.toast("❌ Oops... an error occurred while trying to update the Listing Status Table.")
+                else:
+                    st.toast("❌ Oops... an error occurred while trying to update both tables.")
+
 
         if option == "Home":
             self.home()
@@ -90,12 +103,12 @@ class App():
         st.title("Listing Status")
         updateButton = st.button('Update', key = 'update')
         if updateButton:
-            toast = self.stockTrackingApplication.apisManagement.getAPIListingStatus()
+            toast = self.stockTrackingApplication.apisManagement.getListingStatus()
             if toast == "Successful API request!✅":
                 st.toast(toast)
             else:
                 st.toast(toast)
-                st.toast("The last CSV displayed will be loaded.")
+                st.toast("The Table Listing Status will be loaded.")
             self.createTableListingStatus()
             st.table(self.listingStatusDataFrame)
         else:
@@ -104,27 +117,32 @@ class App():
 
     def globalQuotes(self):
         st.title("Global Quotes")
-        tab1, tab2 = st.tabs(["Global Quotes Consulted", "Search Global Quote"])
-        with tab1:
+
+        st.header("Search Global Quote")
+        self.symbolList = self.stockTrackingApplication.apisManagement.symbolsDataFrame['symbol'].tolist()
+        selectedSymbol = st.selectbox('Symbol', self.symbolList)
+        st.caption(selectedSymbol)
+        searchButton = st.button('Search', key = 'search', disabled = (selectedSymbol == ""))
+        if searchButton:
+            self.currentGlobalQuoteDataFrame = self.stockTrackingApplication.apisManagement.getGlobalQuote(selectedSymbol)
+            self.currentGlobalQuoteDataFrame = self.currentGlobalQuoteDataFrame.rename(columns={'symbol': 'Symbol', 'current': 'Current Price', 'minimum': 'Minimum Price', 'maximum': 'Maximun Price'})
+            if len(self.currentGlobalQuoteDataFrame.axes[0]) > 0:
+                st.subheader(f"{selectedSymbol} Global Quote")
+                st.table(self.currentGlobalQuoteDataFrame)
+                st.toast("Successful API request!✅")
+                
+            else:
+                st.toast("❌ Oops... an error occurred. Try again later.")
             st.header("Global Quotes Consulted")
             self.createTableGlobalQuotes()
             if len(self.globalQuotesDataFrame.axes[0]) > 0:
                 st.table(self.globalQuotesDataFrame)
             else:
                 st.write("There are no existing successful requests.")
-
-        with tab2:
-            st.header("Search Global Quote")
-            self.symbolList = self.stockTrackingApplication.apisManagement.symbolsDataFrame['symbol'].tolist()
-            selectedSymbol = st.selectbox('Symbol', self.symbolList)
-            st.caption(selectedSymbol)
-            searchButton = st.button('Search', key = 'search', disabled = (selectedSymbol == ""))
-            if searchButton:
-                self.currentGlobalQuoteDataFrame = self.stockTrackingApplication.apisManagement.getGlobalQuote(selectedSymbol)
-                self.currentGlobalQuoteDataFrame = self.currentGlobalQuoteDataFrame.rename(columns={'symbol': 'Symbol', 'current': 'Current Price', 'minimum': 'Minimum Price', 'maximum': 'Maximun Price'})
-                if len(self.currentGlobalQuoteDataFrame.axes[0]) > 0:
-                    st.subheader(f"{selectedSymbol} Global Quote")
-                    st.table(self.currentGlobalQuoteDataFrame)
-                    st.toast("Successful API request!✅")
-                else:
-                    st.toast("❌ Oops... an error occurred. Try again later.")
+        else:
+            st.header("Global Quotes Consulted")
+            self.createTableGlobalQuotes()
+            if len(self.globalQuotesDataFrame.axes[0]) > 0:
+                st.table(self.globalQuotesDataFrame)
+            else:
+                st.write("There are no existing successful requests.")

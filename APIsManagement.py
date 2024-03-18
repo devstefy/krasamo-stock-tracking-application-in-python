@@ -1,13 +1,24 @@
 import requests
-
 import pandas as pd
 from io import StringIO
+import datetime
 
 class APIsManagement():
 
-    def __init__(self):
+    def __init__(self, db):
+        self.db = db
+
         self.apiKey = "VJ856XHXT0I8GR7N"
-        self.date = "2024-01-01"
+
+        try:
+            today = datetime.datetime.now()
+            year = today.year
+            month = today.month if len(str(today.month)) == 2 else f"0{today.month}"
+            day = today.day if len(str(today.day)) == 2 else f"0{today.day}"
+            self.date = f"{year}-{month}-{day}"
+        except:
+            self.date = "2024-01-01"
+
         self.symbol = "GOOG"
 
         self.apiURLGlobalQuotes = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE"
@@ -30,13 +41,12 @@ class APIsManagement():
 
     def getListingStatus(self):
         self.createURLAPIListingStatus()
-        self.getAPIListingStatus()
+        return self.getAPIListingStatus()
 
     def getGlobalQuote(self, symbol : str):
         self.symbol = symbol
         self.createURLAPIGlobalQuotes()
-        dfGlobalQuote = self.getAPIGlobalQuote()
-        return dfGlobalQuote
+        return self.getAPIGlobalQuote()
 
     def getAPIListingStatus(self):
         try:
@@ -48,38 +58,39 @@ class APIsManagement():
                 decoded_content = download.content.decode('utf-8')
                 
                 df = pd.read_csv(StringIO(decoded_content))
-                print(df)
+
                 if len(df.axes[0]) > 0 and 'symbol' in df.columns and 'exchange' in df.columns and 'assetType' in df.columns and 'ipoDate' in df.columns and 'delistingDate' in df.columns and 'status' in df.columns:
-                    df.to_csv('listing_status.csv', index=True)
+                    #df.to_csv('listing_status.csv', index=True)
+                    #self.db.updateTableListingStatus(df)
                     self.listingStatusDataFrame = df
                     self.symbolsDataFrame = df[["symbol"]]
                     return "Successful API request!✅"
                 elif len(df.axes[0]) == 0:
                     print("A problem occurred with the API request.")
-                    self.readListingStatusCSV()
+                    self.readListingStatusDB()
                 else:
-                    print("The CSV Listing Status of the indicated date does not comply with the format.")
-                    self.readListingStatusCSV()
+                    print(f"The CSV Listing Status of the date {self.date} does not comply with the format.")
+                    self.readListingStatusDB()
 
         except requests.exceptions.HTTPError as http_err:
             print(f'Error HTTP: {http_err}') 
-            self.readListingStatusCSV()
+            self.readListingStatusDB()
 
         except requests.exceptions.ConnectionError as conn_err:
             print(f'Connection Error: {conn_err}')
-            self.readListingStatusCSV()
+            self.readListingStatusDB()
 
         except requests.exceptions.Timeout as timeout_err:
             print(f'Timeout: {timeout_err}')
-            self.readListingStatusCSV()
+            self.readListingStatusDB()
 
         except requests.exceptions.RequestException as req_err:
             print(f'Request Error: {req_err}')
-            self.readListingStatusCSV()
+            self.readListingStatusDB()
 
         except Exception as e:
             print(f'An error occurred: {e}')
-            self.readListingStatusCSV()
+            self.readListingStatusDB()
 
         return "An error has occurred ❌"
         
@@ -95,8 +106,7 @@ class APIsManagement():
                 maximum = globalQuoteValues.get("03. high")
                 if current != None and min != None and max != None:
                     self.updateGlobalQuotesDataFrame(self.symbol, current, minimum, maximum)
-                    new_row = {'symbol': self.symbol, 'current': current, 'minimum': minimum, 'maximum': maximum}
-                    dfGlobalQuote = dfGlobalQuote.append(new_row, ignore_index = True)
+                    dfGlobalQuote = pd.DataFrame({'symbol': [self.symbol], 'current': [current], 'minimum': [minimum], 'maximum': [maximum]})
                     return dfGlobalQuote
         return dfGlobalQuote
 
@@ -106,9 +116,20 @@ class APIsManagement():
         self.listingStatusDataFrame = df
         self.symbolsDataFrame = df[["symbol"]]
 
+    def readListingStatusDB(self):
+        print("The Table Listing Status will be loaded.")
+        df = self.db.readListingStatusDB()
+        self.listingStatusDataFrame = df
+        self.symbolsDataFrame = df[["symbol"]]
+
+    def readGlobalQuotesDB(self):
+        print("The Table Global Quotes will be loaded.")
+        df = self.db.readGlobalQuotesDB()
+        self.globalQuotesDataFrame = df
+
     def updateGlobalQuotesDataFrame(self, symbol, current, minimum, maximum):
         if symbol in self.globalQuotesDataFrame['symbol'].values:
             self.globalQuotesDataFrame.loc[self.globalQuotesDataFrame['symbol'] == symbol, ['current', 'minimum', 'maximum']] = [current, minimum, maximum]
         else:
-            new_row = {'symbol': symbol, 'current': current, 'minimum': minimum, 'maximum': maximum}
-            self.globalQuotesDataFrame = self.globalQuotesDataFrame.append(new_row, ignore_index = True)
+            new_row = pd.DataFrame({'symbol': [symbol], 'current': [current], 'minimum': [minimum], 'maximum': [maximum]})
+            self.globalQuotesDataFrame = pd.concat([self.globalQuotesDataFrame, new_row], ignore_index=True)
