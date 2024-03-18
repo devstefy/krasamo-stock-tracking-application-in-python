@@ -25,7 +25,7 @@ This application allows you to track stocks you are interested in, providing inf
     pip install pandas
     pip install streamlit
     pip install streamlit-option-menu
-    pip install sqlite2
+    pip install sqlite3
 ```
 
 ## Features
