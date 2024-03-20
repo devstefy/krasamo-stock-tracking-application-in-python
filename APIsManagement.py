@@ -154,6 +154,16 @@ class APIsManagement():
         return "An error has occurred ❌"
     
     def findKeyByPartialMatch(self, data, partial_key):
+        """
+        Searches for and returns the value associated with a key that contains a specific substring within a dictionary.
+
+        Args:
+            data (dict): The dictionary in which to perform the search.
+            partial_key (str): The substring to search for within the dictionary keys.
+
+        Returns:
+            The value associated with the found key containing the substring. If no matching key is found, returns None.
+        """
         for key in data.keys():
             if partial_key in key:
                 return data[key]
