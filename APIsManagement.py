@@ -152,6 +152,12 @@ class APIsManagement():
             self.readListingStatusDB()
 
         return "An error has occurred ❌"
+    
+    def findKeyByPartialMatch(self, data, partial_key):
+        for key in data.keys():
+            if partial_key in key:
+                return data[key]
+        return None
         
     def getAPIGlobalQuote(self):
         """
@@ -176,12 +182,13 @@ class APIsManagement():
             globalQuoteDict = response.json()
             globalQuoteValues = globalQuoteDict.get("Global Quote")
             if globalQuoteValues != None:
-                current = globalQuoteValues.get("02. price")
-                minimum = globalQuoteValues.get("04. low")
-                maximum = globalQuoteValues.get("03. high")
+                current = self.findKeyByPartialMatch(globalQuoteValues, 'price')
+                minimum = self.findKeyByPartialMatch(globalQuoteValues, 'low')
+                maximum = self.findKeyByPartialMatch(globalQuoteValues, 'high')
                 if current != None and min != None and max != None:
                     self.updateGlobalQuotesDataFrame(self.symbol, current, minimum, maximum)
                     dfGlobalQuote = pd.DataFrame({'symbol': [self.symbol], 'current': [current], 'minimum': [minimum], 'maximum': [maximum]})
+                    print(self.globalQuotesDataFrame)
                     return dfGlobalQuote
         return dfGlobalQuote
 

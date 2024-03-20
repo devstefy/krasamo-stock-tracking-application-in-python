@@ -221,6 +221,7 @@ class App():
         searchButton = st.button('Search', key = 'search', disabled = (selectedSymbol == ""))
         if searchButton:
             self.currentGlobalQuoteDataFrame = self.stockTrackingApplication.apisManagement.getGlobalQuote(selectedSymbol)
+            #print(self.currentGlobalQuoteDataFrame)
             self.currentGlobalQuoteDataFrame = self.currentGlobalQuoteDataFrame.rename(columns={'symbol': 'Symbol', 'current': 'Current Price', 'minimum': 'Minimum Price', 'maximum': 'Maximum Price'})
             if len(self.currentGlobalQuoteDataFrame.axes[0]) > 0:
                 st.subheader(f"{selectedSymbol} Global Quote")
